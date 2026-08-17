@@ -87,24 +87,25 @@ Yedek: çalıştırıldığı dizinde `zcfg_config.backup-*.json` ve cihazda `/d
 - Fiber OLT/OMCI hattı scriptin işi değil; santral cihazı yine provision/reset edebilir.
 - Firmware büyük değişirse DAL/LocalAccess davranışı sapabilir.
 
-## opkg + USB (`opkg-usb-fix.sh`)
+## opkg + USB (`opkg-usb-fix.sh` + `opkg-usb-bind.sh`)
 
 Bu firmware’de BusyBox `wget` segfault eder; overlay ~500 KB. Script **cihazda root** olarak çalışır:
 
-1. Mount edilmiş USB/SD diskleri listeler, numara ile seçersiniz (tek diskse onay)
-2. `wget` → `curl` shim
-3. `dest usb <secilen>/opkg` ve `/bin/opkg` sarmalayıcı (varsayılan `-d usb`)
-4. `PATH` için `/etc/profile.d/opkg-usb.sh`
+1. Mount edilmiş USB/SD diskleri listeler, numara ile seçersiniz
+2. `wget` → `curl` shim; `opkg` varsayılan dest USB
+3. PATH: `/etc/profile.d/opkg-usb.sh` **ve** `/etc/shinit` (SSH login-shell değil, profile okunmaz)
+4. Reboot / USB takılınca `opkg-usb-bind` dest yolunu günceller (`S99zyroot` + `hotplug.d/block/90-opkg-usb`)
+
+İki dosya aynı dizinde olmalı (`fix` `bind`’i kopyalar):
 
 ```sh
-scp opkg-usb-fix.sh root@192.168.1.1:/tmp/
+scp opkg-usb-fix.sh opkg-usb-bind.sh root@192.168.1.1:/tmp/
 ssh root@192.168.1.1
 sh /tmp/opkg-usb-fix.sh
-# tek USB, sorusuz:
-sh /tmp/opkg-usb-fix.sh --noninteractive
 ```
 
-Resmi OpenWrt `kmod-*` bu vendor kernel ile uyumlu değildir.
+Resmi OpenWrt `kmod-*` bu vendor kernel ile uyumlu değildir. Yeni oturum açın; `nano` gibi paketler USB’de `usr/bin` altına kurulur.
+
 
 ## Güvenlik notu
 
