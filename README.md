@@ -88,6 +88,3 @@ Yedek: çalıştırıldığı dizinde `zcfg_config.backup-*.json` ve cihazda `/d
 - Firmware büyük değişirse DAL/LocalAccess davranışı sapabilir.
 - `clinicLAN` / `homeLAN` gibi sizin eklediğiniz route’lara dokunulmaz; yalnızca `TR111` veya ACS IP’sini (`ManagementServer.X_TTNET_ACS_IP`) kapsayan static route kapatılır.
 
-## Güvenlik notu
-
-Script kişisel kimlik bilgisi taşımaz. Paylaşırken **sadece** `ex3501-root.py` + bu README gitsin. Config yedeklerini, session loglarını, eski notları koymayın.
