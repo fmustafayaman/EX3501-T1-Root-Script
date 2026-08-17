@@ -2,7 +2,14 @@
 
 Zyxel **EX3501-T1** (Türk Telekom HGW) fabrika resetinden sonra LAN üzerinden root + SSH geri kazandıran tek Python scripti.
 
-Yalnızca **kendi cihazınızda** kullanın.
+## Uyarı
+
+Bu yazılım **yalnızca eğitim ve araştırma** amaçlıdır. Yalnızca **size ait** veya üzerinde yetkiniz olan cihazlarda kullanın.
+
+Kullanımdan doğacak her türlü sonuç (cihazın bozulması, bağlantı kaybı, sözleşme/yasal ihlal, veri kaybı) **kullanıcıya aittir**. Yazar(lar) hiçbir sorumluluk kabul etmez; garanti verilmez (`AS IS`).
+
+Başkasının modemine, izinsiz sistemlere veya yasa dışı amaçlara yönelik kullanım yasaktır.
+
 
 ## Ne yapar
 
