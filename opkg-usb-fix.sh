@@ -176,7 +176,7 @@ EOF
     ok "opkg sarmalayici kuruldu"
 fi
 
-# --- PATH ---
+# --- PATH: profile.d + shinit (SSH login-shell degil, profile okunmaz) ---
 PROF=/etc/profile.d/opkg-usb.sh
 mkdir -p /etc/profile.d
 cat > "$PROF" << EOF
@@ -185,14 +185,55 @@ export PATH=$DEST/usr/bin:$DEST/bin:\$PATH
 export LD_LIBRARY_PATH=$DEST/usr/lib:$DEST/lib\${LD_LIBRARY_PATH:+:\$LD_LIBRARY_PATH}
 EOF
 chmod 644 "$PROF"
-ok "PATH: $PROF"
+ok "PATH profile.d: $PROF"
+
+if [ -f /etc/shinit ] && ! grep -q opkg-usb.sh /etc/shinit; then
+    echo '[ -f /etc/profile.d/opkg-usb.sh ] && . /etc/profile.d/opkg-usb.sh' >> /etc/shinit
+    ok "PATH /etc/shinit (SSH/ash interactive)"
+fi
+
+# --- reboot + USB takilinca dest yolunu guncelle ---
+HERE=$(dirname "$0")
+if [ -f "$HERE/opkg-usb-bind.sh" ]; then
+    cp "$HERE/opkg-usb-bind.sh" /usr/sbin/opkg-usb-bind
+elif [ -f /usr/sbin/opkg-usb-bind ]; then
+    :
+else
+    die "opkg-usb-bind.sh bu script ile ayni dizinde olmali"
+fi
+chmod 755 /usr/sbin/opkg-usb-bind
+
+mkdir -p /etc/hotplug.d/block
+cat > /etc/hotplug.d/block/90-opkg-usb << 'EOF'
+[ "$ACTION" = "add" ] || exit 0
+sleep 2
+[ -x /usr/sbin/opkg-usb-bind ] && /usr/sbin/opkg-usb-bind
+EOF
+chmod 755 /etc/hotplug.d/block/90-opkg-usb
+ok "hotplug: /etc/hotplug.d/block/90-opkg-usb"
+if [ -f /etc/init.d/S99zyroot ]; then
+    if ! grep -q opkg-usb-bind /etc/init.d/S99zyroot; then
+        grep -v '^exit 0' /etc/init.d/S99zyroot > /tmp/s99n
+        echo '( sleep 12; /usr/sbin/opkg-usb-bind ) >/dev/null 2>&1 &' >> /tmp/s99n
+        echo 'exit 0' >> /tmp/s99n
+        cat /tmp/s99n > /etc/init.d/S99zyroot
+        rm -f /tmp/s99n
+        chmod 755 /etc/init.d/S99zyroot
+        ok "S99zyroot: boot'ta opkg-usb-bind"
+    fi
+else
+    info "S99zyroot yok — sadece hotplug ile baglanir (USB tak/cikar veya bind elle)"
+fi
+
+/usr/sbin/opkg-usb-bind || true
 
 echo
 echo "Tamam."
 echo "  USB dest : $DEST"
 echo "  opkg install <paket>     -> USB"
 echo "  opkg -d root install ... -> overlay (kucuk, dikkat)"
-echo "  Yeni oturumda PATH guncel (exit + tekrar login)."
+echo "  PATH: yeni SSH/telnet oturumu (veya: . /etc/profile.d/opkg-usb.sh)"
+echo "  USB reboot/takilinca dest otomatik guncellenir."
 echo
 echo "Not: resmi OpenWrt kmod-* bu vendor kernel ile uyumlu degil; kurmayin."
 echo "     airoha/ex3501_t1_tt feed 404 olabilir; base/packages genelde iner."
