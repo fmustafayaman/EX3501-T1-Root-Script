@@ -86,5 +86,27 @@ Yedek: çalıştırıldığı dizinde `zcfg_config.backup-*.json` ve cihazda `/d
 - Fabrika reset → her şey (CWMP, TR111, root) stok haline döner; scripti tekrar çalıştırın.
 - Fiber OLT/OMCI hattı scriptin işi değil; santral cihazı yine provision/reset edebilir.
 - Firmware büyük değişirse DAL/LocalAccess davranışı sapabilir.
-- Sizin eklediğiniz route’lara dokunulmaz; yalnızca `TR111` veya ACS IP’sini (`ManagementServer.X_TTNET_ACS_IP`) kapsayan static route kapatılır.
+
+## opkg + USB (`opkg-usb-fix.sh`)
+
+Bu firmware’de BusyBox `wget` segfault eder; overlay ~500 KB. Script **cihazda root** olarak çalışır:
+
+1. Mount edilmiş USB/SD diskleri listeler, numara ile seçersiniz (tek diskse onay)
+2. `wget` → `curl` shim
+3. `dest usb <secilen>/opkg` ve `/bin/opkg` sarmalayıcı (varsayılan `-d usb`)
+4. `PATH` için `/etc/profile.d/opkg-usb.sh`
+
+```sh
+scp opkg-usb-fix.sh root@192.168.1.1:/tmp/
+ssh root@192.168.1.1
+sh /tmp/opkg-usb-fix.sh
+# tek USB, sorusuz:
+sh /tmp/opkg-usb-fix.sh --noninteractive
+```
+
+Resmi OpenWrt `kmod-*` bu vendor kernel ile uyumlu değildir.
+
+## Güvenlik notu
+
+Scriptler kişisel kimlik bilgisi taşımaz. Paylaşırken yalnızca `ex3501-root.py`, `opkg-usb-fix.sh` ve bu README gitsin. Config yedeklerini, session loglarını, eski notları koymayın.
 
