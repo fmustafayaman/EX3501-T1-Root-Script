@@ -86,5 +86,5 @@ Yedek: çalıştırıldığı dizinde `zcfg_config.backup-*.json` ve cihazda `/d
 - Fabrika reset → her şey (CWMP, TR111, root) stok haline döner; scripti tekrar çalıştırın.
 - Fiber OLT/OMCI hattı scriptin işi değil; santral cihazı yine provision/reset edebilir.
 - Firmware büyük değişirse DAL/LocalAccess davranışı sapabilir.
-- `clinicLAN` / `homeLAN` gibi sizin eklediğiniz route’lara dokunulmaz; yalnızca `TR111` veya ACS IP’sini (`ManagementServer.X_TTNET_ACS_IP`) kapsayan static route kapatılır.
+- Sizin eklediğiniz route’lara dokunulmaz; yalnızca `TR111` veya ACS IP’sini (`ManagementServer.X_TTNET_ACS_IP`) kapsayan static route kapatılır.
 
