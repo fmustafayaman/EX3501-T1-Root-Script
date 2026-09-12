@@ -105,9 +105,3 @@ sh /tmp/opkg-usb-fix.sh
 ```
 
 Resmi OpenWrt `kmod-*` bu vendor kernel ile uyumlu değildir. Yeni oturum açın; `nano` gibi paketler USB’de `usr/bin` altına kurulur.
-
-
-## Güvenlik notu
-
-Scriptler kişisel kimlik bilgisi taşımaz. Paylaşırken yalnızca `ex3501-root.py`, `opkg-usb-fix.sh` ve bu README gitsin. Config yedeklerini, session loglarını, eski notları koymayın.
-
